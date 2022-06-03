@@ -44,20 +44,25 @@ void setup() {
 
 }
 
-void loop() {
-
-    memcpy(BUF, pika0, 3072 * sizeof(char));
-
-    delayWhileDisplaying(33);
-
-    memcpy(BUF, pika1, 3072 * sizeof(char));
-
-    delayWhileDisplaying(33);
-
-    memcpy(BUF, pika2, 3072 * sizeof(char));
-
-    delayWhileDisplaying(33);
+void displayImage(image img, int ms, int frameLength = 33){
+  for (int j = 0; j < ms / (img.size*frameLength); j++){
+    for (int i = 0; i < img.size; i++){
+      memcpy(BUF, img.data[i], 3072 * sizeof(char));
+      delayWhileDisplaying(frameLength);
+    }
+  }
 }
+
+
+void loop() { 
+    displayImage(rainbowSwirl, 1000); 
+    memcpy(BUF, UCR1, 3072 * sizeof(char));
+    delayWhileDisplaying(1000);
+}
+
+//make gif a struct with data and numFrames
+//regular image can just be 1 frame
+
 
 //Assuming the other operations are fast this should keep the display running 
 inline void delayWhileDisplaying(long period) {
