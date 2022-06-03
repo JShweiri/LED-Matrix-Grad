@@ -8,76 +8,77 @@ CIPath = "./ConvertedImages/"
 ITCPath = "./ImagesToConvert"
 headerName = "graphics.h"
 
-def processFrame(img, name):
-  red_image_rgb = img.convert("RGB")
+def processFrame(img):
+    red_image_rgb = img.convert("RGB")
 
-  result = "unsigned char " + name + "[32][32][3] = {\n"
+    result = ""
 
-  for i in range(1024):
-    for item in red_image_rgb.getpixel((i%32,i/32)):
-      result = result + "0x" + hex(item)[2:].zfill(2) + ", "
-    if i%32 == 31:
-      result += "\n"
+    for i in range(1024):
+        for item in red_image_rgb.getpixel((i%32,i/32)):
+            result = result + "0x" + hex(item)[2:].zfill(2) + ", "
+        if i%32 == 31:
+            result += "\n"
 
-  result = result + "};"
-
-  return result
+    return result
 
 def processFile(filename):
 
-  (name, filetype) = filename.split("\\")[-1].split(".")
+    (name, filetype) = filename.split("\\")[-1].split(".")
 
-  if(filetype == "png"):
-    img = Image.open(filename)
-    res = processFrame(img, name)
-    f = open(CIPath + name + ".h", "w")
-    f.write(res)
-    f.close()
-    print("file created!")
+    if(filetype == "png"):
+        img = Image.open(filename)
+        res = processFrame(img)
+        res = "struct image {\nunsigned char size = 1;\nunsigned char data[1][32][32][3] = {" + res + "}; } " + name + ";"
 
-  elif(filetype == "gif"):
-    img = Image.open(filename)
-    res = ""
-    for i in range(img.n_frames):
-      img.seek(i)
-      res = res + processFrame(img,  name + str(i)) + "\n\n"
-    f = open(CIPath + name + ".h", "w")
-    f.write(res)
-    f.close()
-    print("file created!")
+        f = open(CIPath + name + ".h", "w")
+        f.write(res)
+        f.close()
+        print("file created!")
+
+    elif(filetype == "gif"):
+        img = Image.open(filename)
+        res = "struct image {\nunsigned char size = " + str(img.n_frames) + ";\nunsigned char data[" + str(img.n_frames) + "][32][32][3] = {"
+        for i in range(img.n_frames):
+            img.seek(i)
+            res = res + processFrame(img) + "\n"
+        res = res + "}; } " + name + ";"
+        f = open(CIPath + name + ".h", "w")
+        f.write(res)
+        f.close()
+        print("file created!")
 
 
 def updateGraphicsHeader():
-  content = """//https://lvgl.io/tools/imageconverter
+    content = """//https://lvgl.io/tools/imageconverter
 //Big endian
 //Pixel format: Fix 0xFF: 8 bit, Red: 8 bit, Green: 8 bit, Blue: 8 bit
 """
-  for file in os.listdir(CIPath):
-    content = content + "#include \"" + CIPath + file + "\"\n"
-  f = open(headerName, "w")
-  f.write(content)
-  f.close()
+    for file in os.listdir(CIPath):
+        content = content + "#include \"" + CIPath + file + "\"\n"
+    f = open(headerName, "w")
+    f.write(content)
+    f.close()
 
 
 
 if(len(sys.argv) > 1):
-  filename = sys.argv[1]
+    filename = sys.argv[1]
 else:
-  filename = input('Enter file or folder name:')
+    filename = input('Enter file or folder name:')
 
 if filename=="":
-  filename = ITCPath
+    filename = ITCPath
 
 # #checks if path is a file
 if(os.path.isfile(filename)):
-  processFile(filename)
-  updateGraphicsHeader()
+    processFile(filename)
+    updateGraphicsHeader()
 
 # #checks if path is a directory
 if(os.path.isdir(filename)):
-  for file in os.listdir(filename):
-    processFile(filename + "\\" + file)
-  updateGraphicsHeader()
-  
+    for file in os.listdir(filename):
+        processFile(filename + "\\" + file)
+    updateGraphicsHeader()
+    
 
 

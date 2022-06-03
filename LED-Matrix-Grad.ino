@@ -44,10 +44,10 @@ void setup() {
 
 }
 
-void displayImage(image img, int ms, int frameLength = 33){
+void displayImage(Image img, int ms, int frameLength = 33){
   for (int j = 0; j < ms / (img.size*frameLength); j++){
     for (int i = 0; i < img.size; i++){
-      memcpy(BUF, img.data[i], 3072 * sizeof(char));
+      memcpy(BUF, ((unsigned char*)img.frames)+ i*3072, 3072 * sizeof(char));
       delayWhileDisplaying(frameLength);
     }
   }
@@ -55,9 +55,10 @@ void displayImage(image img, int ms, int frameLength = 33){
 
 
 void loop() { 
-    displayImage(rainbowSwirl, 1000); 
-    memcpy(BUF, UCR1, 3072 * sizeof(char));
-    delayWhileDisplaying(1000);
+//    displayImage(rainbowSwirl, 1000); 
+//    displayImage(UCR1, 1000);
+//    displayImage(UCR2, 1000);
+    displayImage(rainbowSwirl, 1000);
 }
 
 //make gif a struct with data and numFrames
@@ -72,6 +73,7 @@ inline void delayWhileDisplaying(long period) {
     }
 }
 
+//this should take in a buffer? then no data needs to be moved... idk
 inline void sendBuffer() {
 
     for (uint8_t PWM = 0; PWM < PWM_SIZE; ++PWM) {

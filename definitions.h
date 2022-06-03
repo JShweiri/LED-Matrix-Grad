@@ -30,3 +30,8 @@
 
 //PWM Quanta  lower this for less colors and higher performance
 #define PWM_SIZE 9
+
+struct Image {
+unsigned char size;
+void* frames;
+};
