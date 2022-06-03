@@ -21,11 +21,7 @@ def processFrame(img, name):
 
   result = result + "};"
 
-  f = open(CIPath + name + ".h", "w")
-  f.write(result)
-  f.close()
-
-  print("file created!")
+  return result
 
 def processFile(filename):
 
@@ -33,15 +29,22 @@ def processFile(filename):
 
   if(filetype == "png"):
     img = Image.open(filename)
-    processFrame(img, name)
+    res = processFrame(img, name)
+    f = open(CIPath + name + ".h", "w")
+    f.write(res)
+    f.close()
+    print("file created!")
+
   elif(filetype == "gif"):
-    if not os.path.exists(CIPath + name + "/"):
-      os.makedirs(CIPath + name + "/")
     img = Image.open(filename)
+    res = ""
     for i in range(img.n_frames):
       img.seek(i)
-      processFrame(img,  name + "/" + name + str(i))
-    print("hmmmm")
+      res = res + processFrame(img,  name + str(i)) + "\n\n"
+    f = open(CIPath + name + ".h", "w")
+    f.write(res)
+    f.close()
+    print("file created!")
 
 
 def updateGraphicsHeader():
