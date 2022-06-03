@@ -28,17 +28,17 @@ void setup() {
 
 void loop() {
 
-  memcpy (BUF, UCR1, 3072 * sizeof(char));
+  memcpy (BUF, Pika1, 3072 * sizeof(char));
 
-  delayWhileDisplaying(1000);
+  delayWhileDisplaying(33);
 
-  memcpy (BUF, UCR2, 3072 * sizeof(char));
+  memcpy (BUF, Pika2, 3072 * sizeof(char));
 
-  delayWhileDisplaying(1000);
+  delayWhileDisplaying(33);
 
-  memcpy (BUF, wilcox, 3072 * sizeof(char));
+  memcpy (BUF, Pika3, 3072 * sizeof(char));
 
-  delayWhileDisplaying(1000);
+  delayWhileDisplaying(33);
 }
 
 inline void delayWhileDisplaying(long period){

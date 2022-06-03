@@ -28,5 +28,5 @@
 //                OTHER
 
 
-//PWM Quanta
+//PWM Quanta  lower this for less colors and higher performance
 #define PWM_SIZE 9

@@ -4,19 +4,12 @@ from PIL import Image
 import sys
 import os
 
-
 CIPath = "./ConvertedImages/"
-
 ITCPath = "./ImagesToConvert"
-
 headerName = "graphics.h"
 
-def processFile(filename):
-  red_image = Image.open(filename)
-
-  name = filename.split("\\")[-1].split(".")[0]
-
-  red_image_rgb = red_image.convert("RGB")
+def processFrame(img, name):
+  red_image_rgb = img.convert("RGB")
 
   result = "unsigned char " + name + "[32][32][3] = {\n"
 
@@ -33,6 +26,22 @@ def processFile(filename):
   f.close()
 
   print("file created!")
+
+def processFile(filename):
+
+  (name, filetype) = filename.split("\\")[-1].split(".")
+
+  if(filetype == "png"):
+    img = Image.open(filename)
+    processFrame(img, name)
+  elif(filetype == "gif"):
+    if not os.path.exists(CIPath + name + "/"):
+      os.makedirs(CIPath + name + "/")
+    img = Image.open(filename)
+    for i in range(img.n_frames):
+      img.seek(i)
+      processFrame(img,  name + "/" + name + str(i))
+    print("hmmmm")
 
 
 def updateGraphicsHeader():
