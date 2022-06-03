@@ -28,19 +28,15 @@ void setup() {
 
 void loop() {
 
-  memcpy (BUF, UCR1_map, 3072 * sizeof(char));
+  memcpy (BUF, UCR1, 3072 * sizeof(char));
 
   delayWhileDisplaying(1000);
 
-  memcpy (BUF, UCR2_map, 3072 * sizeof(char));
+  memcpy (BUF, UCR2, 3072 * sizeof(char));
 
   delayWhileDisplaying(1000);
 
   memcpy (BUF, wilcox, 3072 * sizeof(char));
-
-  delayWhileDisplaying(1000);
-
-    memcpy (BUF, wilcoxDithered, 3072 * sizeof(char));
 
   delayWhileDisplaying(1000);
 }
