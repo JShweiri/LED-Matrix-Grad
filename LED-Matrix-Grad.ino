@@ -59,6 +59,7 @@ void loop() {
 //    displayImage(UCR1, 1000);
 //    displayImage(UCR2, 1000);
     displayImage(rainbowSwirl, 1000);
+    displayImage(pika, 1000);
 }
 
 //make gif a struct with data and numFrames

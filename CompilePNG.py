@@ -23,29 +23,18 @@ def processFrame(img):
 
 def processFile(filename):
 
-    (name, filetype) = filename.split("\\")[-1].split(".")
+    name = filename.split("\\")[-1].split(".")[0]
 
-    if(filetype == "png"):
-        img = Image.open(filename)
-        res = processFrame(img)
-        res = "struct image {\nunsigned char size = 1;\nunsigned char data[1][32][32][3] = {" + res + "}; } " + name + ";"
-
-        f = open(CIPath + name + ".h", "w")
-        f.write(res)
-        f.close()
-        print("file created!")
-
-    elif(filetype == "gif"):
-        img = Image.open(filename)
-        res = "struct image {\nunsigned char size = " + str(img.n_frames) + ";\nunsigned char data[" + str(img.n_frames) + "][32][32][3] = {"
-        for i in range(img.n_frames):
-            img.seek(i)
-            res = res + processFrame(img) + "\n"
-        res = res + "}; } " + name + ";"
-        f = open(CIPath + name + ".h", "w")
-        f.write(res)
-        f.close()
-        print("file created!")
+    img = Image.open(filename)
+    res = "unsigned char " + name + "Data[" + str(img.n_frames) + "][32][32][3] = {"
+    for i in range(img.n_frames):
+        img.seek(i)
+        res = res + processFrame(img) + "\n"
+    res = res + "};\nImage " + name + " = {" + str(img.n_frames) + ", " + name + "Data};"
+    f = open(CIPath + name + ".h", "w")
+    f.write(res)
+    f.close()
+    print("file created!")
 
 
 def updateGraphicsHeader():
