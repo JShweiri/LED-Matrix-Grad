@@ -28,15 +28,15 @@ void setup() {
 
 void loop() {
 
-  memcpy (BUF, Pika1, 3072 * sizeof(char));
+  memcpy (BUF, pika0, 3072 * sizeof(char));
 
   delayWhileDisplaying(33);
 
-  memcpy (BUF, Pika2, 3072 * sizeof(char));
+  memcpy (BUF, pika1, 3072 * sizeof(char));
 
   delayWhileDisplaying(33);
 
-  memcpy (BUF, Pika3, 3072 * sizeof(char));
+  memcpy (BUF, pika2, 3072 * sizeof(char));
 
   delayWhileDisplaying(33);
 }
