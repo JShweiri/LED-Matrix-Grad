@@ -23,28 +23,26 @@ void setup() {
     pinMode(B, OUTPUT);
     pinMode(C, OUTPUT);
     pinMode(D, OUTPUT);
-
-    memcpy (BUF, wilcox, 3072 * sizeof(char));
 }
 
 
 void loop() {
 
-//random effect 1:
-//    int x = rand() % 32;
-//    int y = rand() % 32;
-//    BUF[y][x][RED] = rand() % PWM_SIZE;
-//    BUF[y][x][BLUE] = rand() % PWM_SIZE;
-//    BUF[y][x][GREEN] = rand() % PWM_SIZE;
+  memcpy (BUF, UCR1_map, 3072 * sizeof(char));
 
-//random effect 2:
-//for(int i = 0; i < 180; i++){
-//  BUF[i/32][i%32][RED] = i%10 + i/10;
-//  BUF[i/32][i%32][GREEN] = i%10;
-//  BUF[i/32][i%32][BLUE] = i%10 - i/10;
-//}
+  delayWhileDisplaying(1000);
 
-    delayWhileDisplaying(33);
+  memcpy (BUF, UCR2_map, 3072 * sizeof(char));
+
+  delayWhileDisplaying(1000);
+
+  memcpy (BUF, wilcox, 3072 * sizeof(char));
+
+  delayWhileDisplaying(1000);
+
+    memcpy (BUF, wilcoxDithered, 3072 * sizeof(char));
+
+  delayWhileDisplaying(1000);
 }
 
 inline void delayWhileDisplaying(long period){

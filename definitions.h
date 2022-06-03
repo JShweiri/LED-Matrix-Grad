@@ -29,4 +29,4 @@
 
 
 //PWM Quanta
-#define PWM_SIZE 12
+#define PWM_SIZE 9
