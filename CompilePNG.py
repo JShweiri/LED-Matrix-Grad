@@ -29,7 +29,7 @@ def processFile(filename):
     res = "unsigned char " + name + "Data[" + str(img.n_frames) + "][32][32][3] = {"
     for i in range(img.n_frames):
         img.seek(i)
-        res = res + processFrame(img) + "\n"
+        res = res + "\n" + processFrame(img)
     res = res + "};\nImage " + name + " = {" + str(img.n_frames) + ", " + name + "Data};"
     f = open(CIPath + name + ".h", "w")
     f.write(res)

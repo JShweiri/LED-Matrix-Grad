@@ -55,11 +55,13 @@ void displayImage(Image img, int ms, int frameLength = 33){
 
 
 void loop() { 
-//    displayImage(rainbowSwirl, 1000); 
-//    displayImage(UCR1, 1000);
-//    displayImage(UCR2, 1000);
-    displayImage(rainbowSwirl, 1000);
+    displayImage(rainbowSwirl, 1000); 
+    displayImage(UCR1, 1000);
+    displayImage(wilcox, 1000);   
+    displayImage(UCR2, 1000);
     displayImage(pika, 1000);
+    displayImage(rickRoll, 5000, 60);
+
 }
 
 //make gif a struct with data and numFrames
