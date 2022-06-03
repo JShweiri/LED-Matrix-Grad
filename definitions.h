@@ -1,3 +1,6 @@
+
+//               PIN ASSIGNMENTS
+
 // There are no special reasons I chose these pins
 #define R1 2
 #define G1 3
@@ -20,3 +23,10 @@
 #define RED 0
 #define GREEN 1
 #define BLUE 2
+
+
+//                OTHER
+
+
+//PWM Quanta
+#define PWM_SIZE 12

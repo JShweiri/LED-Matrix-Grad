@@ -1,8 +1,5 @@
 #include "definitions.h"
-//Define a header with all characters, heart, ucr logo, images...
-
-//PWM Quanta
-#define PWM_SIZE 10
+#include "graphics.h"
 
 // [Y][X][R/G/B]
 uint8_t BUF[32][32][3];
@@ -27,14 +24,25 @@ void setup() {
     pinMode(C, OUTPUT);
     pinMode(D, OUTPUT);
 
+    memcpy (BUF, wilcox, 3072 * sizeof(char));
 }
 
+
 void loop() {
-    int x = rand() % 32;
-    int y = rand() % 32;
-    BUF[y][x][RED] = rand() % PWM_SIZE;
-    BUF[y][x][BLUE] = rand() % PWM_SIZE;
-    BUF[y][x][GREEN] = rand() % PWM_SIZE;
+
+//random effect 1:
+//    int x = rand() % 32;
+//    int y = rand() % 32;
+//    BUF[y][x][RED] = rand() % PWM_SIZE;
+//    BUF[y][x][BLUE] = rand() % PWM_SIZE;
+//    BUF[y][x][GREEN] = rand() % PWM_SIZE;
+
+//random effect 2:
+//for(int i = 0; i < 180; i++){
+//  BUF[i/32][i%32][RED] = i%10 + i/10;
+//  BUF[i/32][i%32][GREEN] = i%10;
+//  BUF[i/32][i%32][BLUE] = i%10 - i/10;
+//}
 
     delayWhileDisplaying(33);
 }
@@ -56,12 +64,12 @@ for(uint8_t PWM=0;PWM<PWM_SIZE;++PWM){
         // Send 2 rows of color data
         uint8_t x;
         for (x = 0; x < 32; ++x) {
-            digitalWrite(R1, BUF[line][x][RED] > PWM); // Output each color data to the pin
-            digitalWrite(R2, BUF[line + 16][x][RED] > PWM); // Dot brightness is brighter than the current PWM counter
-            digitalWrite(G1, BUF[line][x][GREEN] > PWM); // 1 when bright,
-            digitalWrite(G2, BUF[line + 16][x][GREEN] > PWM); // Output 0 when it is dark
-            digitalWrite(B1, BUF[line][x][BLUE] > PWM);
-            digitalWrite(B2, BUF[line + 16][x][BLUE] > PWM);
+            digitalWrite(R1, BUF[line][x][RED]*PWM_SIZE/255 > PWM); // Output each color data to the pin
+            digitalWrite(R2, BUF[line + 16][x][RED]*PWM_SIZE/255 > PWM); // Dot brightness is brighter than the current PWM counter
+            digitalWrite(G1, BUF[line][x][GREEN]*PWM_SIZE/255 > PWM); // 1 when bright,
+            digitalWrite(G2, BUF[line + 16][x][GREEN]*PWM_SIZE/255 > PWM); // Output 0 when it is dark
+            digitalWrite(B1, BUF[line][x][BLUE]*PWM_SIZE/255 > PWM);
+            digitalWrite(B2, BUF[line + 16][x][BLUE]*PWM_SIZE/255 > PWM);
             digitalWrite(CLK, 1); // Send one clock to shift the data
             digitalWrite(CLK, 0);
         }
