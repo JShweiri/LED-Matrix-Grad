@@ -5,6 +5,12 @@ import sys
 import os
 
 
+CIPath = "./ConvertedImages/"
+
+ITCPath = "./ImagesToConvert"
+
+headerName = "graphics.h"
+
 def processFile(filename):
   red_image = Image.open(filename)
 
@@ -22,7 +28,7 @@ def processFile(filename):
 
   result = result + "};"
 
-  f = open("./ConvertedImages/" + name + ".h", "w")
+  f = open(CIPath + name + ".h", "w")
   f.write(result)
   f.close()
 
@@ -34,9 +40,9 @@ def updateGraphicsHeader():
 //Big endian
 //Pixel format: Fix 0xFF: 8 bit, Red: 8 bit, Green: 8 bit, Blue: 8 bit
 """
-  for file in os.listdir("./ConvertedImages"):
-    content = content + "#include\"" + file + "\"\n"
-  f = open("graphics.h", "w")
+  for file in os.listdir(CIPath):
+    content = content + "#include \"" + CIPath + file + "\"\n"
+  f = open(headerName, "w")
   f.write(content)
   f.close()
 
@@ -48,7 +54,7 @@ else:
   filename = input('Enter file or folder name:')
 
 if filename=="":
-  filename = "./ImagesToConvert"
+  filename = ITCPath
 
 # #checks if path is a file
 if(os.path.isfile(filename)):
