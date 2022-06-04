@@ -55,15 +55,29 @@ void displayImage(Image img, int ms, int frameLength = 33){
   }
 }
 
+//x and y off by 1?
+void displayImage(Image img, int ms, int x, int y, int w, int h, int frameLength = 33){
+  for (int j = 0; j < ms / (img.size*frameLength); j++){
+    for (int i = 0; i < img.size; i++){
+      for (int k = 0; k < h; k++){
+        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*3*k , w * sizeof(char)*3);
+      }
+      delayWhileDisplaying(frameLength);
+    }
+  }
+}
+
+//if you're not going to overwrite entire buffer make sure to clear the contents first.
+void clearBuffer() { memset(BUF, 0, 3072); }
 
 void loop() { 
-    displayImage(rainbowSwirl, 1000); 
-    displayImage(UCR1, 1000);
-    displayImage(wilcox, 1000);   
-    displayImage(UCR2, 1000);
-    displayImage(pika, 1000);
-    displayImage(rickRoll, 5000, 60);
-
+    // displayImage(rainbowSwirl, 1000); 
+    // displayImage(UCR1, 1000);
+    // displayImage(wilcox, 1000);   
+    // displayImage(UCR2, 1000);
+    // displayImage(pika, 1000);
+    // displayImage(rickRoll, 5000, 60);
+    displayImage(heart, 1000, 6, 9, 13, 12);
 }
 
 //make gif a struct with data and numFrames
