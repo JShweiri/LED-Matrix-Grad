@@ -46,7 +46,7 @@ void setup() {
 
 //move width and height into struct
 
-void displayImage(Image img, int ms, int x = 0, int y = 0, int w = 32, int h = 32, int frameLength = 33){
+void displayImage(Image img, int ms, int frameLength = 33, int x = 0, int y = 0, int w = 32, int h = 32){
   for (int j = 0; j < ms / (img.size*frameLength); j++){
     for (int i = 0; i < img.size; i++){
       for (int k = 0; k < h; k++){
@@ -87,7 +87,7 @@ void loop() {
      displayImage(UCR2, 1000);
      displayImage(pika, 1000);
      displayImage(rickRoll, 5000, 60);
-    displayImage(heart, 1000, 6, 9, 13, 12);
+    displayImage(heart, 1000, 33, 6, 9, 13, 12);
 }
 
 //make gif a struct with data and numFrames
