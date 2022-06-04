@@ -44,16 +44,38 @@ void setup() {
 
 }
 
+//move width and height into struct
+
 void displayImage(Image img, int ms, int x = 0, int y = 0, int w = 32, int h = 32, int frameLength = 33){
   for (int j = 0; j < ms / (img.size*frameLength); j++){
     for (int i = 0; i < img.size; i++){
       for (int k = 0; k < h; k++){
-        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*h*i*3 + w*3*k , w * sizeof(char)*3);
+        //96 * (y+k) + x*3:
+        //(y+k) is the current y poisition in the buffer
+        // the beginning of each row is 96 bytes apart
+        // so to move y+k rows we multiply 96* (y+k)
+        // we then move x pixels to the left. there are 3 bytes per pixel so x*3
+
+        //w*h*3*i + w*3*k
+        //there are w*h*3 bytes per frame so we multiply that by i to get to the i-th frame
+        //within that frame we need to be outputting the appropriate row
+        // so we take the width of a row (w*3) and multiply it by what row index we are currently on (k)
+        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*h*3*i + w*3*k , w * 3);
       }
       delayWhileDisplaying(frameLength);
     }
   }
 }
+
+////using the width position and what frame we are on find the bits needed to be imported into the buffer from fontimage
+//void displayString(Image font, string s, int x = 0, int y = 0, int ms = 33){
+//  for (int j = 0; j < ms / (img.size*frameLength); j++){
+//      for (int k = 0; k < h; k++){
+//        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*h*3*i + w*3*k , w * 3);
+//      }
+//      delayWhileDisplaying(frameLength);
+//  }
+//}
 
 //if you're not going to overwrite entire buffer make sure to clear the contents first.
 void clearBuffer() { memset(BUF, 0, 3072); }
