@@ -8,29 +8,46 @@ CIPath = "./ConvertedImages/"
 ITCPath = "./ImagesToConvert"
 headerName = "graphics.h"
 
+# This function takes in a PIL image object and returns the list of RGB hex values as a string
 def processFrame(img):
-    red_image_rgb = img.convert("RGB")
-
+    rgb_img = img.convert("RGB")
     result = ""
-
+    # for every pixel in the image
     for i in range(1024):
-        for item in red_image_rgb.getpixel((i%32,i/32)):
+        # for every color in each picture (r/g/b)
+        for item in rgb_img.getpixel((i%32,i/32)):
+            # Add the hex value to the string
             result = result + "0x" + hex(item)[2:].zfill(2) + ", "
+        # Add newlines to format nicely
         if i%32 == 31:
             result += "\n"
-
     return result
+
+
+# TODO: ADD include guards...
 
 def processFile(filename):
 
+    # get Name of file excluding filetype
     name = filename.split("\\")[-1].split(".")[0]
 
     img = Image.open(filename)
+
+    # Here we are creating the byte array containing the hex
     res = "unsigned char " + name + "Data[" + str(img.n_frames) + "][32][32][3] = {"
+
+    # If it is a gif we append the hex for every frame.. if a png this will only run once
     for i in range(img.n_frames):
         img.seek(i)
         res = res + "\n" + processFrame(img)
-    res = res + "};\nImage " + name + " = {" + str(img.n_frames) + ", " + name + "Data};"
+    
+    # Finish the byte array formatting
+    res = res + "};"
+
+    # Here we make a struct using the data(byte array) from above and the number of frames it contains
+    res = res + "\nImage " + name + " = {" + str(img.n_frames) + ", " + name + "Data};"
+
+    # We then write all of this to its own header file
     f = open(CIPath + name + ".h", "w")
     f.write(res)
     f.close()
@@ -38,10 +55,8 @@ def processFile(filename):
 
 
 def updateGraphicsHeader():
-    content = """//https://lvgl.io/tools/imageconverter
-//Big endian
-//Pixel format: Fix 0xFF: 8 bit, Red: 8 bit, Green: 8 bit, Blue: 8 bit
-"""
+    content = ""
+    # For each file in the directory we include it in graphics.h
     for file in os.listdir(CIPath):
         content = content + "#include \"" + CIPath + file + "\"\n"
     f = open(headerName, "w")
@@ -49,6 +64,7 @@ def updateGraphicsHeader():
     f.close()
 
 
+#        THE ACTUAL PROGRAM:
 
 if(len(sys.argv) > 1):
     filename = sys.argv[1]
@@ -68,6 +84,5 @@ if(os.path.isdir(filename)):
     for file in os.listdir(filename):
         processFile(filename + "\\" + file)
     updateGraphicsHeader()
-    
 
 
