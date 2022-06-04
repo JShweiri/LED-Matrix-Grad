@@ -44,23 +44,11 @@ void setup() {
 
 }
 
-// change this to deal with different sizes? why? will you actually use that?
-//maybe for text? ADd support for that first.
-void displayImage(Image img, int ms, int frameLength = 33){
-  for (int j = 0; j < ms / (img.size*frameLength); j++){
-    for (int i = 0; i < img.size; i++){
-      memcpy(BUF, ((unsigned char*)img.frames)+ i*3072, 3072 * sizeof(char));
-      delayWhileDisplaying(frameLength);
-    }
-  }
-}
-
-//x and y off by 1?
-void displayImage(Image img, int ms, int x, int y, int w, int h, int frameLength = 33){
+void displayImage(Image img, int ms, int x = 0, int y = 0, int w = 32, int h = 32, int frameLength = 33){
   for (int j = 0; j < ms / (img.size*frameLength); j++){
     for (int i = 0; i < img.size; i++){
       for (int k = 0; k < h; k++){
-        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*3*k , w * sizeof(char)*3);
+        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*h*i*3 + w*3*k , w * sizeof(char)*3);
       }
       delayWhileDisplaying(frameLength);
     }
@@ -71,12 +59,12 @@ void displayImage(Image img, int ms, int x, int y, int w, int h, int frameLength
 void clearBuffer() { memset(BUF, 0, 3072); }
 
 void loop() { 
-    // displayImage(rainbowSwirl, 1000); 
-    // displayImage(UCR1, 1000);
-    // displayImage(wilcox, 1000);   
-    // displayImage(UCR2, 1000);
-    // displayImage(pika, 1000);
-    // displayImage(rickRoll, 5000, 60);
+     displayImage(rainbowSwirl, 1000); 
+     displayImage(UCR1, 1000);
+     displayImage(wilcox, 1000);   
+     displayImage(UCR2, 1000);
+     displayImage(pika, 1000);
+     displayImage(rickRoll, 5000, 60);
     displayImage(heart, 1000, 6, 9, 13, 12);
 }
 
