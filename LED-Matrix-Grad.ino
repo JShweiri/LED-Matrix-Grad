@@ -77,7 +77,7 @@ void displayImage(Image img, int ms = 0, int frameLength = 33, int x = 0, int y 
 }
 
 ////using the width position and what frame we are on find the bits needed to be imported into the buffer from fontimage
-//void displayString(Image font, string s, int x = 0, int y = 0, int ms = 33){
+//void displayString(Image font, string s){
 //  for (int j = 0; j < ms / (img.size*frameLength); j++){
 //      for (int k = 0; k < h; k++){
 //        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*h*3*i + w*3*k , w * 3);
@@ -109,7 +109,7 @@ switch (incomingByte)
         displayImage(UCR2);
         break;
     case 5:
-        displayImage(pika);
+        displayImage(congrats);
         break;
     case 6:
         displayImage(rickRoll, 5000, 60);
@@ -117,6 +117,15 @@ switch (incomingByte)
     case 7:
         clearBuffer();
         displayImage(heart, 1000, 33, 6, 9, 13, 12);
+        break;
+    case 8:
+        displayImage(congratsRGB);
+        break;
+     case 9:
+        displayImage(hiMom);
+        break;
+     case 10:
+        displayImage(pika);
         break;
     default: // UCR2 by default
      displayImage(UCR2);
@@ -145,8 +154,8 @@ inline void delayWhileDisplaying(long period) {
     while (millis() < time_now + period) {
         sendBuffer();
 
-        //put this inside sendBuffer if you want to be able to interrupt a gif/image
         if (recievedData()){
+          //make this return true if you want it to interrupt the current image 
           break;
         }
     }

@@ -1,4 +1,7 @@
+#include "./ConvertedImages/congrats.h"
+#include "./ConvertedImages/congratsRGB.h"
 #include "./ConvertedImages/heart.h"
+#include "./ConvertedImages/hiMom.h"
 #include "./ConvertedImages/pika.h"
 #include "./ConvertedImages/rainbowSwirl.h"
 #include "./ConvertedImages/rickRoll.h"
