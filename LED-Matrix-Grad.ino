@@ -44,6 +44,8 @@ void setup() {
 
 }
 
+// change this to deal with different sizes? why? will you actually use that?
+//maybe for text? ADd support for that first.
 void displayImage(Image img, int ms, int frameLength = 33){
   for (int j = 0; j < ms / (img.size*frameLength); j++){
     for (int i = 0; i < img.size; i++){
