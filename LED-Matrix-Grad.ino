@@ -51,7 +51,11 @@ void setup() {
 
 //move width and height into struct
 
-void displayImage(Image img, int ms, int frameLength = 33, int x = 0, int y = 0, int w = 32, int h = 32){
+void displayImage(Image img, int ms = 0, int frameLength = 33, int x = 0, int y = 0, int w = 32, int h = 32){
+  //default to 1 loop length
+  if (ms == 0){
+    ms = img.size*frameLength;
+  }
   for (int j = 0; j < ms / (img.size*frameLength); j++){
     for (int i = 0; i < img.size; i++){
       for (int k = 0; k < h; k++){
@@ -91,23 +95,21 @@ void loop() {
 
 switch (incomingByte)
 {
-
-  //make a default display time equal to 1 loop duration
   
     case 1:
-        displayImage(rainbowSwirl, 1000);
+        displayImage(rainbowSwirl);
         break;
     case 2:
-        displayImage(UCR1, 1000);
+        displayImage(UCR1);
         break;
     case 3:
-        displayImage(wilcox, 1000);
+        displayImage(wilcox);
         break;
     case 4:
-        displayImage(UCR2, 1000);
+        displayImage(UCR2);
         break;
     case 5:
-        displayImage(pika, 1000);
+        displayImage(pika);
         break;
     case 6:
         displayImage(rickRoll, 5000, 60);
@@ -116,15 +118,8 @@ switch (incomingByte)
         clearBuffer();
         displayImage(heart, 1000, 33, 6, 9, 13, 12);
         break;
-    default: // loop by default
-     displayImage(rainbowSwirl, 1000); 
-     displayImage(UCR1, 1000);
-     displayImage(wilcox, 1000);   
-     displayImage(UCR2, 1000);
-     displayImage(pika, 1000);
-     displayImage(rickRoll, 5000, 60);
-     clearBuffer();
-     displayImage(heart, 1000, 33, 6, 9, 13, 12);
+    default: // UCR2 by default
+     displayImage(UCR2);
      break;
 }
 
@@ -143,15 +138,14 @@ bool recievedData(){
   return false;
 }
 
-//make gif a struct with data and numFrames
-//regular image can just be 1 frame
-
 
 //Assuming the other operations are fast this should keep the display running 
 inline void delayWhileDisplaying(long period) {
     long time_now = millis();
     while (millis() < time_now + period) {
         sendBuffer();
+
+        //put this inside sendBuffer if you want to be able to interrupt a gif/image
         if (recievedData()){
           break;
         }
