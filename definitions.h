@@ -1,3 +1,5 @@
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H
 
 //               PIN ASSIGNMENTS
 
@@ -35,3 +37,5 @@ struct Image {
 unsigned char size;
 void* frames;
 };
+
+#endif

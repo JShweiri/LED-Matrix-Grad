@@ -14,7 +14,7 @@ def processFrame(img):
     result = ""
     # for every pixel in the image
     for i in range(1024):
-        # for every color in each picture (r/g/b)
+        # for every color in each picture (r/g/b)       the last part just converts index i to (x, y) value
         for item in rgb_img.getpixel((i%32,i/32)):
             # Add the hex value to the string
             result = result + "0x" + hex(item)[2:].zfill(2) + ", "
@@ -26,6 +26,8 @@ def processFrame(img):
 
 # TODO: ADD include guards...
 
+# include width and height in struct so we can have bigger/smaller images?
+
 def processFile(filename):
 
     # get Name of file excluding filetype
@@ -33,8 +35,11 @@ def processFile(filename):
 
     img = Image.open(filename)
 
-    # Here we are creating the byte array containing the hex
-    res = "unsigned char " + name + "Data[" + str(img.n_frames) + "][32][32][3] = {"
+    # start include guard 
+    res = "#ifndef " + name.upper() + "_H\n#define " + name.upper() + "_H\n\n"
+    
+    # Here we are creating the byte array containing the hex in our c file
+    res = res + "unsigned char " + name + "Data[" + str(img.n_frames) + "][32][32][3] = {"
 
     # If it is a gif we append the hex for every frame.. if a png this will only run once
     for i in range(img.n_frames):
@@ -46,6 +51,9 @@ def processFile(filename):
 
     # Here we make a struct using the data(byte array) from above and the number of frames it contains
     res = res + "\nImage " + name + " = {" + str(img.n_frames) + ", " + name + "Data};"
+
+    # end include guard
+    res = res + "\n#endif"
 
     # We then write all of this to its own header file
     f = open(CIPath + name + ".h", "w")
