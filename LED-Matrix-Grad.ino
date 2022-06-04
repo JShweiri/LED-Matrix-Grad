@@ -42,6 +42,11 @@ void setup() {
     // we use persistance of vision to maintain an image.
     // PWM is not supported either so we use a loop to do it ourselves.
 
+
+  Serial.begin(9600);//for debugging only
+  Serial1.begin(9600);
+//  while (!Serial);
+
 }
 
 //move width and height into struct
@@ -80,14 +85,62 @@ void displayImage(Image img, int ms, int frameLength = 33, int x = 0, int y = 0,
 //if you're not going to overwrite entire buffer make sure to clear the contents first.
 void clearBuffer() { memset(BUF, 0, 3072); }
 
+int incomingByte = 0;
+
 void loop() { 
+
+switch (incomingByte)
+{
+
+  //make a default display time equal to 1 loop duration
+  
+    case 1:
+        displayImage(rainbowSwirl, 1000);
+        break;
+    case 2:
+        displayImage(UCR1, 1000);
+        break;
+    case 3:
+        displayImage(wilcox, 1000);
+        break;
+    case 4:
+        displayImage(UCR2, 1000);
+        break;
+    case 5:
+        displayImage(pika, 1000);
+        break;
+    case 6:
+        displayImage(rickRoll, 5000, 60);
+        break;
+    case 7:
+        clearBuffer();
+        displayImage(heart, 1000, 33, 6, 9, 13, 12);
+        break;
+    default: // loop by default
      displayImage(rainbowSwirl, 1000); 
      displayImage(UCR1, 1000);
      displayImage(wilcox, 1000);   
      displayImage(UCR2, 1000);
      displayImage(pika, 1000);
      displayImage(rickRoll, 5000, 60);
-    displayImage(heart, 1000, 33, 6, 9, 13, 12);
+     clearBuffer();
+     displayImage(heart, 1000, 33, 6, 9, 13, 12);
+     break;
+}
+
+}
+
+bool recievedData(){
+  if (Serial1.available() > 0) {
+    // read the incoming byte:
+    incomingByte = Serial1.read();
+
+    Serial.print("I received: ");
+    Serial.println(incomingByte, DEC);
+          
+    return true;
+  }
+  return false;
 }
 
 //make gif a struct with data and numFrames
@@ -99,6 +152,9 @@ inline void delayWhileDisplaying(long period) {
     long time_now = millis();
     while (millis() < time_now + period) {
         sendBuffer();
+        if (recievedData()){
+          break;
+        }
     }
 }
 

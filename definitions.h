@@ -4,7 +4,7 @@
 //               PIN ASSIGNMENTS
 
 // There are no special reasons I chose these pins
-#define R1 2
+#define R1 0
 #define G1 3
 #define B1 4
 #define R2 5
