@@ -82,14 +82,16 @@ void displayCharacter(Font font, char *s, int y = 16){
 
 int frameLength = 33;
 
-for(int oldX = 33; oldX > -font.charWidth; oldX--){
+int n = strlen(s);
+
+for(int oldX = 31; oldX > -n*(font.charWidth-3); oldX--){
 
   for(int letterIndex = 0; letterIndex < strlen(s); letterIndex++){
 
     int decodedCY = (s[letterIndex] - ' ') / (font.totalWidth / font.charWidth);
     int decodedCX = (s[letterIndex] - ' ') % (font.totalWidth / font.charWidth);
 
-    int x = oldX + (font.charWidth-1)*letterIndex;
+    int x = oldX + (font.charWidth-3)*letterIndex;
     
       for (int k = 0; k < font.charHeight; k++){
 
@@ -123,10 +125,10 @@ char c = '!';
 
 void loop() {
 
-  char str[] = "string";
+  char str[] = "hey beautiful ;)";
 
   displayCharacter(font1, str);
-  displayImage(rainbowSwirl);
+//  displayImage(rainbowSwirl);
 
   // switch (incomingByte)
   //{
