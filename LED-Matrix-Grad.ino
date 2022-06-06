@@ -80,41 +80,27 @@ void displayCharacter(Font font, char c, int y = 16){
 
 int frameLength = 33;
 
-int decodedCY = 4;
-int decodedCX = 4;
+int decodedCY = (c - ' ') / (font.totalWidth / font.charWidth);
+int decodedCX = (c - ' ') % (font.totalWidth / font.charWidth);
 
 for(int x = 31; x > -font.charWidth; x--){
       for (int k = 0; k < font.charHeight; k++){
 
-//change 160 from hard coded value
-
         int offset = 0;
         if (x < 0){
-           memcpy(((unsigned char*)BUF) + 96 * (y+k), ((unsigned char*)font.characterData) + 160*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX + (-x)*3 , font.charWidth * 3 - (-x)*3);
+           memcpy(((unsigned char*)BUF) + 96 * (y+k), ((unsigned char*)font.characterData) + font.totalWidth*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX + (-x)*3 , font.charWidth * 3 - (-x)*3);
         }
         else if (x+font.charWidth > 31){
-           memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.characterData) + 160*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX, (32-x) * 3);
+           memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.characterData) + font.totalWidth*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX, (32-x) * 3);
         }
         else {
-        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.characterData) + 160*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX , font.charWidth * 3);
+        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.characterData) + font.totalWidth*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX , font.charWidth * 3);
         }
       }
       
       delayWhileDisplaying(frameLength);
 }
 }
-
-////using the width position and what frame we are on find the bits needed to be imported into the buffer from fontimage
-//add letters to buffer from xy to xy
-//if to xy > 32 || < 0 skip
-//void displayString(Image font, string s){
-//  for (int j = 0; j < ms / (img.size*frameLength); j++){
-//      for (int k = 0; k < h; k++){
-//        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*h*3*i + w*3*k , w * 3);
-//      }
-//      delayWhileDisplaying(frameLength);
-//  }
-//}
 
 //if you're not going to overwrite entire buffer make sure to clear the contents first.
 void clearBuffer() { memset(BUF, 0, 3072); }
@@ -123,49 +109,52 @@ int incomingByte = 0;
 
 // if incoming byte = '*' read string until newline
 
-void loop() { 
+char c = '!';
 
-displayCharacter(font1, 'x');
+void loop() {
 
+  displayCharacter(font1, c);
 
-//switch (incomingByte)
-//{
-  
-//    case 1:
-//        displayImage(rainbowSwirl);
-//        break;
-//    case 2:
-//        displayImage(UCR1);
-//        break;
-//    case 3:
-//        displayImage(wilcox);
-//        break;
-//    case 4:
-//        displayImage(UCR2);
-//        break;
-//    case 5:
-//        displayImage(congrats);
-//        break;
-//    case 6:
-//        displayImage(rickRoll, 60);
-//        break;
-//    case 7:
-//        clearBuffer();
-//        displayImage(heart, 33, 500, 6, 9, 13, 12);
-//        break;
-//    case 8:
-//        displayImage(congratsRGB);
-//        break;
-//     case 9:
-//        displayImage(hiMom);
-//        break;
-//     case 10:
-//        displayImage(pika);
-//        break;
-//    default: // UCR2 by default
-//     displayImage(UCR2);
-//     break;
-//}
+  c+=1;
+
+  // switch (incomingByte)
+  //{
+
+  //    case 1:
+  //        displayImage(rainbowSwirl);
+  //        break;
+  //    case 2:
+  //        displayImage(UCR1);
+  //        break;
+  //    case 3:
+  //        displayImage(wilcox);
+  //        break;
+  //    case 4:
+  //        displayImage(UCR2);
+  //        break;
+  //    case 5:
+  //        displayImage(congrats);
+  //        break;
+  //    case 6:
+  //        displayImage(rickRoll, 60);
+  //        break;
+  //    case 7:
+  //        clearBuffer();
+  //        displayImage(heart, 33, 500, 6, 9, 13, 12);
+  //        break;
+  //    case 8:
+  //        displayImage(congratsRGB);
+  //        break;
+  //     case 9:
+  //        displayImage(hiMom);
+  //        break;
+  //     case 10:
+  //        displayImage(pika);
+  //        break;
+  //    default: // UCR2 by default
+  //     displayImage(UCR2);
+  //     break;
+  //}
 
 }
 
