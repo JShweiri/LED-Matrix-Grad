@@ -76,18 +76,27 @@ void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y 
   }
 }
 
-void displayCharacter(Font font, char c, int y = 16){
+void displayCharacter(Font font, char *s, int y = 16){
+
+  clearBuffer();
 
 int frameLength = 33;
 
-int decodedCY = (c - ' ') / (font.totalWidth / font.charWidth);
-int decodedCX = (c - ' ') % (font.totalWidth / font.charWidth);
+for(int oldX = 33; oldX > -font.charWidth; oldX--){
 
-for(int x = 31; x > -font.charWidth; x--){
+  for(int letterIndex = 0; letterIndex < strlen(s); letterIndex++){
+
+    int decodedCY = (s[letterIndex] - ' ') / (font.totalWidth / font.charWidth);
+    int decodedCX = (s[letterIndex] - ' ') % (font.totalWidth / font.charWidth);
+
+    int x = oldX + (font.charWidth-1)*letterIndex;
+    
       for (int k = 0; k < font.charHeight; k++){
 
         int offset = 0;
-        if (x < 0){
+        if (x - 31 > 0 || x + font.charWidth < 0 ){
+          
+        }else if (x < 0){
            memcpy(((unsigned char*)BUF) + 96 * (y+k), ((unsigned char*)font.characterData) + font.totalWidth*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX + (-x)*3 , font.charWidth * 3 - (-x)*3);
         }
         else if (x+font.charWidth > 31){
@@ -97,13 +106,14 @@ for(int x = 31; x > -font.charWidth; x--){
         memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.characterData) + font.totalWidth*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX , font.charWidth * 3);
         }
       }
+  }
       
       delayWhileDisplaying(frameLength);
 }
 }
 
 //if you're not going to overwrite entire buffer make sure to clear the contents first.
-void clearBuffer() { memset(BUF, 0, 3072); }
+inline void clearBuffer() { memset(BUF, 0, 3072); }
 
 int incomingByte = 0;
 
@@ -113,9 +123,10 @@ char c = '!';
 
 void loop() {
 
-  displayCharacter(font1, c);
+  char str[] = "string";
 
-  c+=1;
+  displayCharacter(font1, str);
+  displayImage(rainbowSwirl);
 
   // switch (incomingByte)
   //{

@@ -36,18 +36,18 @@
 struct Image {
 unsigned char numFrames;
 
-unsigned char width;
 unsigned char height;
+unsigned char width;
 
 void* imageData;
 };
 
 struct Font {
-unsigned char totalWidth;
 unsigned char totalHeight;
+unsigned char totalWidth;
 
-unsigned char charWidth;
 unsigned char charHeight;
+unsigned char charWidth;
 
 void* characterData;
 };
