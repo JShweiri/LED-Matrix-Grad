@@ -35,13 +35,21 @@
 
 struct Image {
 unsigned char numFrames;
-void* frames;
+
+unsigned char width;
+unsigned char height;
+
+void* imageData;
 };
 
 struct Font {
+unsigned char totalWidth;
+unsigned char totalHeight;
+
 unsigned char charWidth;
 unsigned char charHeight;
-void* characters;
+
+void* characterData;
 };
 
 #endif

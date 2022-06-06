@@ -51,14 +51,14 @@ void setup() {
 
 //move width and height into struct
 
-void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y = 0, int w = 32, int h = 32){
+void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y = 0){
   //default to 1 loop length
   if (ms == 0){
     ms = img.numFrames*frameLength;
   }
   for (int j = 0; j < ms / (img.numFrames*frameLength); j++){
     for (int i = 0; i < img.numFrames; i++){
-      for (int k = 0; k < h; k++){
+      for (int k = 0; k < img.height; k++){
         //96 * (y+k) + x*3:
         //(y+k) is the current y poisition in the buffer
         // the beginning of each row is 96 bytes apart
@@ -69,36 +69,37 @@ void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y 
         //there are w*h*3 bytes per frame so we multiply that by i to get to the i-th frame
         //within that frame we need to be outputting the appropriate row
         // so we take the width of a row (w*3) and multiply it by what row index we are currently on (k)
-        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.frames) + w*h*3*i + w*3*k , w * 3);
+        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)img.imageData) + img.width*img.height*3*i + img.width*3*k , img.width * 3);
       }
       delayWhileDisplaying(frameLength);
     }
   }
 }
 
-void displayCharacter(Image font, char c, int w = 32, int h = 32){
+void displayCharacter(Font font, char c, int y = 16){
 
 int frameLength = 33;
 
 int decodedCY = 4;
 int decodedCX = 4;
 
-int y = 12;
+for(int x = 31; x > -font.charWidth; x--){
+      for (int k = 0; k < font.charHeight; k++){
 
-for(int x = 31; x > -w; x--){
-      for (int k = 0; k < h; k++){
+//change 160 from hard coded value
 
         int offset = 0;
         if (x < 0){
-           memcpy(((unsigned char*)BUF) + 96 * (y+k), ((unsigned char*)font.frames) + 160*3*(k+decodedCY*h) + w*3*decodedCX + (-x)*3 , w * 3 - (-x)*3);
+           memcpy(((unsigned char*)BUF) + 96 * (y+k), ((unsigned char*)font.characterData) + 160*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX + (-x)*3 , font.charWidth * 3 - (-x)*3);
         }
-        else if (x+w > 31){
-           memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.frames) + 160*3*(k+decodedCY*h) + w*3*decodedCX, (32-x) * 3);
+        else if (x+font.charWidth > 31){
+           memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.characterData) + 160*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX, (32-x) * 3);
         }
         else {
-        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.frames) + 160*3*(k+decodedCY*h) + w*3*decodedCX , w * 3);
+        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.characterData) + 160*3*(k+decodedCY*font.charHeight) + font.charWidth*3*decodedCX , font.charWidth * 3);
         }
       }
+      
       delayWhileDisplaying(frameLength);
 }
 }
@@ -124,7 +125,7 @@ int incomingByte = 0;
 
 void loop() { 
 
-displayCharacter(font1, 'x', 10, 12);
+displayCharacter(font1, 'x');
 
 
 //switch (incomingByte)
