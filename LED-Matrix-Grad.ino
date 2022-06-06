@@ -51,13 +51,13 @@ void setup() {
 
 //move width and height into struct
 
-void displayImage(Image img, int ms = 0, int frameLength = 33, int x = 0, int y = 0, int w = 32, int h = 32){
+void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y = 0, int w = 32, int h = 32){
   //default to 1 loop length
   if (ms == 0){
-    ms = img.size*frameLength;
+    ms = img.numFrames*frameLength;
   }
-  for (int j = 0; j < ms / (img.size*frameLength); j++){
-    for (int i = 0; i < img.size; i++){
+  for (int j = 0; j < ms / (img.numFrames*frameLength); j++){
+    for (int i = 0; i < img.numFrames; i++){
       for (int k = 0; k < h; k++){
         //96 * (y+k) + x*3:
         //(y+k) is the current y poisition in the buffer
@@ -76,7 +76,36 @@ void displayImage(Image img, int ms = 0, int frameLength = 33, int x = 0, int y 
   }
 }
 
+void displayCharacter(Image font, char c, int w = 32, int h = 32){
+
+int frameLength = 33;
+
+int decodedCY = 4;
+int decodedCX = 4;
+
+int y = 12;
+
+for(int x = 31; x > -w; x--){
+      for (int k = 0; k < h; k++){
+
+        int offset = 0;
+        if (x < 0){
+           memcpy(((unsigned char*)BUF) + 96 * (y+k), ((unsigned char*)font.frames) + 160*3*(k+decodedCY*h) + w*3*decodedCX + (-x)*3 , w * 3 - (-x)*3);
+        }
+        else if (x+w > 31){
+           memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.frames) + 160*3*(k+decodedCY*h) + w*3*decodedCX, (32-x) * 3);
+        }
+        else {
+        memcpy(((unsigned char*)BUF) + 96 * (y+k) + x*3, ((unsigned char*)font.frames) + 160*3*(k+decodedCY*h) + w*3*decodedCX , w * 3);
+        }
+      }
+      delayWhileDisplaying(frameLength);
+}
+}
+
 ////using the width position and what frame we are on find the bits needed to be imported into the buffer from fontimage
+//add letters to buffer from xy to xy
+//if to xy > 32 || < 0 skip
 //void displayString(Image font, string s){
 //  for (int j = 0; j < ms / (img.size*frameLength); j++){
 //      for (int k = 0; k < h; k++){
@@ -91,46 +120,51 @@ void clearBuffer() { memset(BUF, 0, 3072); }
 
 int incomingByte = 0;
 
+// if incoming byte = '*' read string until newline
+
 void loop() { 
 
-switch (incomingByte)
-{
+displayCharacter(font1, 'x', 10, 12);
+
+
+//switch (incomingByte)
+//{
   
-    case 1:
-        displayImage(rainbowSwirl);
-        break;
-    case 2:
-        displayImage(UCR1);
-        break;
-    case 3:
-        displayImage(wilcox);
-        break;
-    case 4:
-        displayImage(UCR2);
-        break;
-    case 5:
-        displayImage(congrats);
-        break;
-    case 6:
-        displayImage(rickRoll, 5000, 60);
-        break;
-    case 7:
-        clearBuffer();
-        displayImage(heart, 1000, 33, 6, 9, 13, 12);
-        break;
-    case 8:
-        displayImage(congratsRGB);
-        break;
-     case 9:
-        displayImage(hiMom);
-        break;
-     case 10:
-        displayImage(pika);
-        break;
-    default: // UCR2 by default
-     displayImage(UCR2);
-     break;
-}
+//    case 1:
+//        displayImage(rainbowSwirl);
+//        break;
+//    case 2:
+//        displayImage(UCR1);
+//        break;
+//    case 3:
+//        displayImage(wilcox);
+//        break;
+//    case 4:
+//        displayImage(UCR2);
+//        break;
+//    case 5:
+//        displayImage(congrats);
+//        break;
+//    case 6:
+//        displayImage(rickRoll, 60);
+//        break;
+//    case 7:
+//        clearBuffer();
+//        displayImage(heart, 33, 500, 6, 9, 13, 12);
+//        break;
+//    case 8:
+//        displayImage(congratsRGB);
+//        break;
+//     case 9:
+//        displayImage(hiMom);
+//        break;
+//     case 10:
+//        displayImage(pika);
+//        break;
+//    default: // UCR2 by default
+//     displayImage(UCR2);
+//     break;
+//}
 
 }
 
@@ -138,6 +172,13 @@ bool recievedData(){
   if (Serial1.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial1.read();
+
+//    if(incomingByte == '*'){
+//      while (incomingByte != '\n'){
+//        //stringTOBeDisplayed append Serial1.read();
+//      }
+//      incomingByte = 69; //whatever value represents stringDisplay in switch case
+//    }
 
     Serial.print("I received: ");
     Serial.println(incomingByte, DEC);

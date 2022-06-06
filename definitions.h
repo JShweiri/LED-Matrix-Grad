@@ -34,8 +34,14 @@
 #define PWM_SIZE 9
 
 struct Image {
-unsigned char size;
+unsigned char numFrames;
 void* frames;
+};
+
+struct Font {
+unsigned char charWidth;
+unsigned char charHeight;
+void* characters;
 };
 
 #endif
