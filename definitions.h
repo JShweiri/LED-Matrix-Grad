@@ -34,22 +34,22 @@
 #define PWM_SIZE 10
 
 struct Image {
-unsigned char numFrames;
+const unsigned char numFrames;
 
-unsigned char height;
-unsigned char width;
+const unsigned char height;
+const unsigned char width;
 
-void* imageData;
+const void *const  imageData;
 };
 
 struct Font {
-unsigned char totalHeight;
-unsigned char totalWidth;
+const unsigned char totalHeight;
+const unsigned char totalWidth;
 
-unsigned char charHeight;
-unsigned char charWidth;
+const unsigned char charHeight;
+const unsigned char charWidth;
 
-void* characterData;
+const void* const characterData;
 };
 
 #endif
