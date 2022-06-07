@@ -31,7 +31,7 @@
 
 
 //PWM Quanta  lower this for less colors and higher performance
-#define PWM_SIZE 5
+#define PWM_SIZE 10
 
 struct Image {
 unsigned char numFrames;

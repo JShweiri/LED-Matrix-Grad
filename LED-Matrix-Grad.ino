@@ -9,46 +9,28 @@ uint8_t BUF[32][32][3];
 
 void setup() {
     //set all pins for output
+    gpio_set_dir_out_masked(0b111111111111001); // gpio_set_dir_masked(0x3, 0x2); -> set pin 0 to input, pin 1 to output, simultaneously.
+    gpio_set_function(A, GPIO_FUNC_SIO);
+    gpio_set_function(B, GPIO_FUNC_SIO);
+    gpio_set_function(C, GPIO_FUNC_SIO);
+    gpio_set_function(D, GPIO_FUNC_SIO);
+    
+        gpio_set_function(R1, GPIO_FUNC_SIO);
+    gpio_set_function(R2, GPIO_FUNC_SIO);
+    gpio_set_function(G1, GPIO_FUNC_SIO);
+        gpio_set_function(G2, GPIO_FUNC_SIO);
+    gpio_set_function(B1, GPIO_FUNC_SIO);
+    gpio_set_function(B2, GPIO_FUNC_SIO);
 
-    //these pins are for controlling the upper? RGB value to be shifted/clocked into the temp registers
-    pinMode(R1, OUTPUT);
-    pinMode(G1, OUTPUT);
-    pinMode(B1, OUTPUT);
+    
+    gpio_set_function(LAT, GPIO_FUNC_SIO);
 
-    //these pins are for controlling the lower RGB value to be shifted/clocked into the temp registers
-    pinMode(R2, OUTPUT);
-    pinMode(G2, OUTPUT);
-    pinMode(B2, OUTPUT);
-
-    //this is the clk pin used for pulsing our data into the temp registers 
-    pinMode(CLK, OUTPUT);
-
-    //the latch pin stores the value in the temp register to the main register
-    pinMode(LAT, OUTPUT);
-
-    // the output enable pin allows the contents of the main register to be displayed on the LEDS
-    pinMode(OE, OUTPUT);
-    digitalWrite(OE, HIGH); //initialize off
-
-    // the ABCD select pins allow you to choose which 2 rows you are outputting the main register to
-    //the rows light together like this: (0 and 16), (1 and 17), etc..
-    pinMode(A, OUTPUT);
-    pinMode(B, OUTPUT);
-    pinMode(C, OUTPUT);
-    pinMode(D, OUTPUT);
-
-    //Only 2 rows (192 LEDs) can be on at once
-    //this is why the temp and main registers are 24 Bytes. 1bit per color(LED) * 192 pixels
-    // we use persistance of vision to maintain an image.
-    // PWM is not supported either so we use a loop to do it ourselves.
-
-
-  Serial.begin(9600);//for debugging only
+//  Serial.begin(9600);//for debugging only
   Serial1.begin(9600);
 
 }
 
-void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y = 0){
+void displayImage(const Image img, const int frameLength = 33, int ms = 0, const uint8_t x = 0, const uint8_t y = 0){
   //default to 1 loop length
   if (ms == 0){
     ms = img.numFrames*frameLength;
@@ -74,26 +56,23 @@ void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y 
 }
 
 //add comments
-void displayCharacter(Font font, char *s, int y = 16, int squeezeFactor = 1){
+void displayCharacter(const Font font, char *s, const uint8_t y = 16, const int frameLength = 33, const uint8_t squeezeFactor = 1){
 
-  clearBuffer();
+clearBuffer();
 
-int frameLength = 33;
-
-int n = strlen(s);
+const uint8_t n = strlen(s);
 
 for(int oldX = 31; oldX > -n*(font.charWidth-squeezeFactor); oldX--){
 
-  for(int letterIndex = 0; letterIndex < strlen(s) ||  s[letterIndex] != '\0'; letterIndex++){
+  for(uint8_t letterIndex = 0; letterIndex < n ||  s[letterIndex] != '\0'; letterIndex++){
 
-    int decodedCY = (s[letterIndex] - ' ') / (font.totalWidth / font.charWidth);
-    int decodedCX = (s[letterIndex] - ' ') % (font.totalWidth / font.charWidth);
+    const int decodedCY = (s[letterIndex] - ' ') / (font.totalWidth / font.charWidth);
+    const int decodedCX = (s[letterIndex] - ' ') % (font.totalWidth / font.charWidth);
 
-    int x = oldX + (font.charWidth-squeezeFactor)*letterIndex;
+    const int x = oldX + (font.charWidth-squeezeFactor)*letterIndex;
     
-      for (int k = 0; k < font.charHeight; k++){
+      for (uint8_t k = 0; k < font.charHeight; k++){
 
-        int offset = 0;
         if (x - 31 > 0 || x + font.charWidth < 0 ){
           
         }else if (x < 0){
@@ -118,9 +97,9 @@ inline void clearBuffer() { memset(BUF, 0, 3072); }
 
 char incomingByte = 0;
 // if incoming byte = '*' read string until newline (put in temp)
-char temp[1024] = "test";
+char temp[255] = "test";
 
-char incomingStr[1024] = "test";
+char incomingStr[255] = "test";
 
 
 void loop() {
@@ -175,14 +154,14 @@ void loop() {
 bool recievedData(){
   if (Serial1.available() > 0) {
     // read the incoming byte:
-    char prev = incomingByte;
+    const char prev = incomingByte;
     incomingByte = Serial1.read();
     if(incomingByte == 255 || incomingByte == '\0'){
       incomingByte = prev;
       return false;
     }
 
-    int i = 0;
+    uint8_t i = 0;
     if(incomingByte == '*'){
       while (incomingByte != '\0'){
         //stringTOBeDisplayed append Serial1.read();
@@ -210,8 +189,8 @@ bool recievedData(){
 
 
 //Assuming the other operations are fast this should keep the display running 
-inline void delayWhileDisplaying(long period) {
-    long time_now = millis();
+inline void delayWhileDisplaying(const long period) {
+    const long time_now = millis();
     while (millis() < time_now + period) {
         sendBuffer();
 
@@ -232,6 +211,7 @@ inline void sendBuffer() {
             // Send 2 rows of color data
             uint8_t x;
             for (x = 0; x < 32; ++x) {
+
                 digitalWrite(R1, BUF[line][x][RED] * PWM_SIZE / 255 > PWM); // Output each color data to the pin
                 digitalWrite(R2, BUF[line + 16][x][RED] * PWM_SIZE / 255 > PWM); // Dot brightness is brighter than the current PWM counter
                 digitalWrite(G1, BUF[line][x][GREEN] * PWM_SIZE / 255 > PWM); // 1 when bright,
@@ -244,15 +224,13 @@ inline void sendBuffer() {
 
             digitalWrite(OE, 1); // Turn off output while we switch lines and latch data
 
-            digitalWrite(A, ((line & 1) > 0));
-            digitalWrite(B, ((line & 2) > 0));
-            digitalWrite(C, ((line & 4) > 0));
-            digitalWrite(D, ((line & 8) > 0));
-
-            digitalWrite(LAT, 1); // Import the contents of the shift register to the latch
-            digitalWrite(LAT, 0);
+gpio_put_masked  ( 0b111100000000000, line << 11);
+            
+            gpio_put(LAT, 1);
+            gpio_put(LAT, 0);
 
             digitalWrite(OE, 0); // Turn on output
+            
 
         }
     }
