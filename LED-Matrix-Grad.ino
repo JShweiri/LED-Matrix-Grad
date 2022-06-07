@@ -45,11 +45,8 @@ void setup() {
 
   Serial.begin(9600);//for debugging only
   Serial1.begin(9600);
-//  while (!Serial);
 
 }
-
-//move width and height into struct
 
 void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y = 0){
   //default to 1 loop length
@@ -76,7 +73,8 @@ void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y 
   }
 }
 
-void displayCharacter(Font font, char *s, int y = 16){
+//add comments
+void displayCharacter(Font font, char *s, int y = 16, int squeezeFactor = 2){
 
   clearBuffer();
 
@@ -84,14 +82,14 @@ int frameLength = 33;
 
 int n = strlen(s);
 
-for(int oldX = 31; oldX > -n*(font.charWidth-3); oldX--){
+for(int oldX = 31; oldX > -n*(font.charWidth-squeezeFactor); oldX--){
 
   for(int letterIndex = 0; letterIndex < strlen(s) ||  s[letterIndex] != '\0'; letterIndex++){
 
     int decodedCY = (s[letterIndex] - ' ') / (font.totalWidth / font.charWidth);
     int decodedCX = (s[letterIndex] - ' ') % (font.totalWidth / font.charWidth);
 
-    int x = oldX + (font.charWidth-3)*letterIndex;
+    int x = oldX + (font.charWidth-squeezeFactor)*letterIndex;
     
       for (int k = 0; k < font.charHeight; k++){
 
@@ -117,67 +115,72 @@ for(int oldX = 31; oldX > -n*(font.charWidth-3); oldX--){
 //if you're not going to overwrite entire buffer make sure to clear the contents first.
 inline void clearBuffer() { memset(BUF, 0, 3072); }
 
+
 char incomingByte = 0;
-
-// if incoming byte = '*' read string until newline
-
+// if incoming byte = '*' read string until newline (put in temp)
 char temp[1024] = "test";
 
 char incomingStr[1024] = "test";
 
+
 void loop() {
 
+//incomingStr is replaced by temp in between displaying things.. to avoid glitchiness
   strcpy(incomingStr, temp);
 
-  displayCharacter(font1, incomingStr);
-//  displayImage(rainbowSwirl);
+   switch (incomingByte)
+  {
 
-  // switch (incomingByte)
-  //{
-
-  //    case 1:
-  //        displayImage(rainbowSwirl);
-  //        break;
-  //    case 2:
-  //        displayImage(UCR1);
-  //        break;
-  //    case 3:
-  //        displayImage(wilcox);
-  //        break;
-  //    case 4:
-  //        displayImage(UCR2);
-  //        break;
-  //    case 5:
-  //        displayImage(congrats);
-  //        break;
-  //    case 6:
-  //        displayImage(rickRoll, 60);
-  //        break;
-  //    case 7:
-  //        clearBuffer();
-  //        displayImage(heart, 33, 500, 6, 9, 13, 12);
-  //        break;
-  //    case 8:
-  //        displayImage(congratsRGB);
-  //        break;
-  //     case 9:
-  //        displayImage(hiMom);
-  //        break;
-  //     case 10:
-  //        displayImage(pika);
-  //        break;
-  //    default: // UCR2 by default
-  //     displayImage(UCR2);
-  //     break;
-  //}
+      case 1:
+          displayImage(rainbowSwirl);
+          break;
+      case 2:
+          displayImage(UCR1);
+          break;
+      case 3:
+          displayImage(wilcox);
+          break;
+      case 4:
+          displayImage(UCR2);
+          break;
+      case 5:
+          displayImage(heart, 33, 500, 17, 2);
+          break;
+      case 6:
+          displayImage(rickRoll, 60);
+          break;
+      case 7:
+          clearBuffer();
+          displayImage(heart, 33, 500, 6, 9);
+          break;
+      case 8:
+          displayImage(congratsRGB);
+          break;
+       case 9:
+          displayImage(hiMom);
+          break;
+       case 10:
+          displayImage(pika);
+          break;
+       case 15:
+          displayCharacter(font1, incomingStr);
+          break;
+      default: // UCR2 by default
+       displayImage(UCR2);
+       break;
+  }
 
 }
 
 bool recievedData(){
   if (Serial1.available() > 0) {
     // read the incoming byte:
+    char prev = incomingByte;
     incomingByte = Serial1.read();
-    if(incomingByte == 255) return false;
+    if(incomingByte == 255 || incomingByte == '\0'){
+      incomingByte = prev;
+      return false;
+    }
 
     int i = 0;
     if(incomingByte == '*'){
@@ -193,7 +196,7 @@ bool recievedData(){
         i++;
       }
       temp[i] = '\0';
-      incomingByte = '*'; //whatever value represents stringDisplay in switch case
+      incomingByte = 15; //whatever value represents stringDisplay in switch case
       return false;
     }
 

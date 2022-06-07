@@ -116,6 +116,8 @@ def updateGraphicsHeader():
 
 #        THE ACTUAL PROGRAM:
 
+
+
 # get path from command line argument if available
 # if not available prompt the user for one
 if(len(sys.argv) > 1):
@@ -129,13 +131,13 @@ if filename=="":
 
 # #checks if path is a file
 if(os.path.isfile(filename)):
-    processFile(filename)
+    processImageFile(filename)
     updateGraphicsHeader()
 
 # #checks if path is a directory
 if(os.path.isdir(filename)):
     for file in os.listdir(filename):
-        processFile(filename + "\\" + file)
+        processImageFile(filename + "\\" + file)
     updateGraphicsHeader()
 
 
