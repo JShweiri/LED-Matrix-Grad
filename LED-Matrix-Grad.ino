@@ -7,31 +7,68 @@
 // [Y][X][R/G/B]
 uint8_t BUF[32][32][3];
 
+
+//TODO:
+//change the math to be more efficient
+//Make it more generalized by using #ifdef
+//you can then make it work for many MCUs
+//Seperate Driver into own file
+//Fix Python Script
+
+
+
 void setup() {
 
     Serial1.begin(9600);
+
+
+    //these things are defined in the sdk
   
     //set all pins for output
+    gpio_init_mask(0b111111111111001);
     gpio_set_dir_out_masked(0b111111111111001); // gpio_set_dir_masked(0x3, 0x2); -> set pin 0 to input, pin 1 to output, simultaneously.
-    gpio_set_function(A, GPIO_FUNC_SIO);
-    gpio_set_function(B, GPIO_FUNC_SIO);
-    gpio_set_function(C, GPIO_FUNC_SIO);
-    gpio_set_function(D, GPIO_FUNC_SIO);
+//    gpio_set_slew_rate(A, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(B, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(C, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(D, GPIO_SLEW_RATE_FAST);
+//
+//    gpio_set_slew_rate(R1, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(R2, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(G1, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(G2, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(B1, GPIO_SLEW_RATE_FAST);
+//    gpio_set_slew_rate(B2, GPIO_SLEW_RATE_FAST);
+//
+//    gpio_set_slew_rate(LAT, GPIO_SLEW_RATE_FAST);
+//
+//    gpio_set_slew_rate(CLK, GPIO_SLEW_RATE_FAST);
+//
+//    gpio_set_slew_rate(OE, GPIO_SLEW_RATE_FAST);
 
-    gpio_set_function(R1, GPIO_FUNC_SIO);
-    gpio_set_function(R2, GPIO_FUNC_SIO);
-    gpio_set_function(G1, GPIO_FUNC_SIO);
-    gpio_set_function(G2, GPIO_FUNC_SIO);
-    gpio_set_function(B1, GPIO_FUNC_SIO);
-    gpio_set_function(B2, GPIO_FUNC_SIO);
 
-    gpio_set_function(LAT, GPIO_FUNC_SIO);
 
-    gpio_set_function(CLK, GPIO_FUNC_SIO);
+//    gpio_set_drive_strength(A, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(B, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(C, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(D, GPIO_DRIVE_STRENGTH_12MA );
+//
+//    gpio_set_drive_strength(R1, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(R2, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(G1, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(G2, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(B1, GPIO_DRIVE_STRENGTH_12MA );
+//    gpio_set_drive_strength(B2, GPIO_DRIVE_STRENGTH_12MA );
+//
+//    gpio_set_drive_strength(LAT, GPIO_DRIVE_STRENGTH_12MA );
+//
+//    gpio_set_drive_strength(CLK, GPIO_DRIVE_STRENGTH_12MA );
+//
+//    gpio_set_drive_strength(OE, GPIO_DRIVE_STRENGTH_12MA );
 
-    gpio_set_function(OE, GPIO_FUNC_SIO);
+
 
     //  Serial.begin(9600);//for debugging only
+//sleep_us(1);
 
 }
 
@@ -87,6 +124,7 @@ void displayCharacter(const Font font, char * s,
 
                 if (x - 31 > 0 || x + font.charWidth < 0) {
 
+                //combine these?
                 } else if (x < 0) {
                     memcpy(((unsigned char * ) BUF) + 96 * (y + k), ((unsigned char * ) font.characterData) + font.totalWidth * 3 * (k + decodedCY * font.charHeight) + font.charWidth * 3 * decodedCX + (-x) * 3, font.charWidth * 3 - (-x) * 3);
                 } else if (x + font.charWidth > 31) {
