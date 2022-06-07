@@ -86,7 +86,7 @@ int n = strlen(s);
 
 for(int oldX = 31; oldX > -n*(font.charWidth-3); oldX--){
 
-  for(int letterIndex = 0; letterIndex < strlen(s); letterIndex++){
+  for(int letterIndex = 0; letterIndex < strlen(s) ||  s[letterIndex] != '\0'; letterIndex++){
 
     int decodedCY = (s[letterIndex] - ' ') / (font.totalWidth / font.charWidth);
     int decodedCX = (s[letterIndex] - ' ') % (font.totalWidth / font.charWidth);
@@ -117,17 +117,19 @@ for(int oldX = 31; oldX > -n*(font.charWidth-3); oldX--){
 //if you're not going to overwrite entire buffer make sure to clear the contents first.
 inline void clearBuffer() { memset(BUF, 0, 3072); }
 
-int incomingByte = 0;
+char incomingByte = 0;
 
 // if incoming byte = '*' read string until newline
 
-char c = '!';
+char temp[1024] = "test";
+
+char incomingStr[1024] = "test";
 
 void loop() {
 
-  char str[] = "hey beautiful ;)";
+  strcpy(incomingStr, temp);
 
-  displayCharacter(font1, str);
+  displayCharacter(font1, incomingStr);
 //  displayImage(rainbowSwirl);
 
   // switch (incomingByte)
@@ -175,13 +177,25 @@ bool recievedData(){
   if (Serial1.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial1.read();
+    if(incomingByte == 255) return false;
 
-//    if(incomingByte == '*'){
-//      while (incomingByte != '\n'){
-//        //stringTOBeDisplayed append Serial1.read();
-//      }
-//      incomingByte = 69; //whatever value represents stringDisplay in switch case
-//    }
+    int i = 0;
+    if(incomingByte == '*'){
+      while (incomingByte != '\0'){
+        //stringTOBeDisplayed append Serial1.read();
+        incomingByte = Serial1.read();
+        if(incomingByte == 255) continue;
+        temp[i] = incomingByte;
+
+    Serial.print("I received: ");
+    Serial.println(incomingByte, DEC);
+        
+        i++;
+      }
+      temp[i] = '\0';
+      incomingByte = '*'; //whatever value represents stringDisplay in switch case
+      return false;
+    }
 
     Serial.print("I received: ");
     Serial.println(incomingByte, DEC);
