@@ -1,5 +1,6 @@
 #include "./ConvertedImages/congratsRGB.h"
 #include "./ConvertedImages/font1.h"
+#include "./ConvertedImages/font2.h"
 #include "./ConvertedImages/heart.h"
 #include "./ConvertedImages/hiMom.h"
 #include "./ConvertedImages/pika.h"

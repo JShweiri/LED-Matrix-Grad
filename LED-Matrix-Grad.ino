@@ -74,7 +74,7 @@ void displayImage(Image img, int frameLength = 33, int ms = 0, int x = 0, int y 
 }
 
 //add comments
-void displayCharacter(Font font, char *s, int y = 16, int squeezeFactor = 2){
+void displayCharacter(Font font, char *s, int y = 16, int squeezeFactor = 1){
 
   clearBuffer();
 
