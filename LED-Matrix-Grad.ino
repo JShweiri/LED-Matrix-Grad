@@ -44,9 +44,9 @@ void setup() {
 //    gpio_set_slew_rate(CLK, GPIO_SLEW_RATE_FAST);
 //
 //    gpio_set_slew_rate(OE, GPIO_SLEW_RATE_FAST);
-
-
-
+//
+//
+//
 //    gpio_set_drive_strength(A, GPIO_DRIVE_STRENGTH_12MA );
 //    gpio_set_drive_strength(B, GPIO_DRIVE_STRENGTH_12MA );
 //    gpio_set_drive_strength(C, GPIO_DRIVE_STRENGTH_12MA );
@@ -82,7 +82,9 @@ void displayImage(const Image img,
         ms = img.numFrames * frameLength;
     }
     for (int j = 0; j < ms / (img.numFrames * frameLength); j++) {
+      #pragma unroll_completely
         for (int i = 0; i < img.numFrames; i++) {
+          #pragma unroll_completely
             for (int k = 0; k < img.height; k++) {
                 //96 * (y+k) + x*3:
                 //(y+k) is the current y poisition in the buffer
@@ -119,7 +121,8 @@ void displayCharacter(const Font font, char * s,
             const int decodedCX = (s[letterIndex] - ' ') % (font.totalWidth / font.charWidth);
 
             const int x = oldX + (font.charWidth - squeezeFactor) * letterIndex;
-
+            
+#pragma unroll_completely
             for (uint8_t k = 0; k < font.charHeight; k++) {
 
                 if (x - 31 > 0 || x + font.charWidth < 0) {
@@ -250,8 +253,11 @@ inline void delayWhileDisplaying(const long period) {
 //this should take in a buffer? then no data needs to be moved... idk
 inline void sendBuffer() {
 
+//had to comment these out... it was too quick
+//#pragma unroll_completely
     for (uint8_t PWM = 0; PWM < PWM_SIZE; ++PWM) {
 
+//#pragma unroll_completely
         for (uint8_t line = 0; line < 16; ++line) {
 
             // Send 2 rows of color data
@@ -270,13 +276,14 @@ inline void sendBuffer() {
             }
 
             gpio_put(OE, 1); // Turn off output while we switch lines and latch data
+            gpio_put(LAT, 1);
 
             gpio_put_masked(0b111100000000000, line << 11);
 
-            gpio_put(LAT, 1);
             gpio_put(LAT, 0);
 
             gpio_put(OE, 0); // Turn on output
+
 
         }
     }
